@@ -1,34 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:raghad4/splash_screen.dart';
+import 'controllers/app_controller.dart';
+import 'controllers/language_controller.dart';
 import 'utils/translations.dart';
-import 'splash_screen.dart';
-import 'controllers/auth_controller.dart'; // ← أضف هذا
-import 'controllers/language_controller.dart'; // ← أضف هذا
+import 'screens/splash_screen.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await GetStorage.init();
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
-    // ← أضف هذا الجزء لتسجيل الـ Controllers
-    Get.put(AuthController());
+    // تهيئة جميع الـ Controllers
     Get.put(LanguageController());
+    Get.put(AppController());
 
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: '/',
+      title: 'app_name'.tr,
       translations: AppTranslations(),
-      locale: Get.deviceLocale,
-      fallbackLocale: const Locale('ar'),
+      locale: Get.find<LanguageController>().currentLocale.value,
+      fallbackLocale: Locale('ar'),
       theme: ThemeData(
         primarySwatch: Colors.brown,
         fontFamily: 'Tajawal',
+        useMaterial3: true,
       ),
-      home: const SplashScreen(),
+      home: SplashScreen(),
     );
   }
 }
